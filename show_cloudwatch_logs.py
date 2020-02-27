@@ -34,14 +34,14 @@ def log_stream_names(token = None):
     response = client.describe_log_streams(
       logGroupName = config[args.section]['LogGroupName'],
       orderBy = 'LastEventTime',
-      limit = 10
+      limit = 50
     )
   else:
     response = client.describe_log_streams(
       logGroupName = config[args.section]['LogGroupName'],
       orderBy = 'LastEventTime',
       nextToken = token,
-      limit = 10
+      limit = 50
     )
 
   for log_stream in response.get('logStreams'):
@@ -58,20 +58,24 @@ def log_event_messages(log_stream_name, token = None):
     response = client.get_log_events(
       logGroupName = config[args.section]['LogGroupName'],
       logStreamName = log_stream_name,
-      limit = 100
+      startTime = firstEventTimestamp,
+      endTime = lastEventTimestamp,
+      limit = 10000
     )
   else:
     response = client.get_log_events(
       logGroupName = config[args.section]['LogGroupName'],
       logStreamName = log_stream_name,
+      startTime = firstEventTimestamp,
+      endTime = lastEventTimestamp,
       nextToken = token,
-      limit = 100
+      limit = 10000
     )
 
   for event in response.get('events'):
-    if event.get('timestamp') >= firstEventTimestamp and event.get('timestamp') <= lastEventTimestamp:
-      yield event.get('message')
+    yield event.get('message')
 
+  print("=============================================")
   if response.get('nextForwardToken').split('/')[1] != response.get('nextBackwardToken').split('/')[1]:
     yield from log_event_messages(log_stream_name, response.get('nextBackwardToken'))  
 
@@ -92,9 +96,9 @@ try:
       datetime.strptime(
         config[args.section].get('LastEventTime') or '2999-12-31 23:59:59', EVENT_TIME_FORMAT)).timestamp() * 1000)
 
-  for x in log_stream_names():
-    #print(x)
-    for y in log_event_messages(x):
-      print(y)
+  for log_stream_name in log_stream_names():
+    #print(log_stream_name)
+    for log_event_message in log_event_messages(x):
+      print(log_event_message)
 except Exception as e:
   print(e, file=sys.stderr)
