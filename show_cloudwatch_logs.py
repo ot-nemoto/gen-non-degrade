@@ -75,7 +75,6 @@ def log_event_messages(log_stream_name, token = None):
   for event in response.get('events'):
     yield event.get('message')
 
-  print("=============================================")
   if response.get('nextForwardToken').split('/')[1] != response.get('nextBackwardToken').split('/')[1]:
     yield from log_event_messages(log_stream_name, response.get('nextBackwardToken'))  
 
