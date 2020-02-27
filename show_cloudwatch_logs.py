@@ -1,29 +1,37 @@
 # coding: UTF-8
 
+import argparse
 import configparser
 import json
 from datetime import datetime
 import boto3
 from boto3.session import Session
 
+# ======================================
+# argparse
+# ======================================
+parser = argparse.ArgumentParser(description='Show Amazon CloudWatch Logs.')
+parser.add_argument("-s", "--section", default='DEFAULT', help='Section in config.ini')
+args = parser.parse_args()
+
+# ======================================
+# configparser
+# ======================================
 config = configparser.ConfigParser()
 config.read('config.ini')
-
-session = Session(profile_name = config['AWS']['Profile'])
-client = session.client('logs')
 
 LAST_EVENT_TIMESTAMP = int(datetime.strptime('2020-01-01', "%Y-%m-%d").timestamp() * 1000)
 
 def log_stream_names(token = None):
   if token == None:
     response = client.describe_log_streams(
-      logGroupName = config['AWS']['LogGroupName'],
+      logGroupName = config[args.section]['LogGroupName'],
       orderBy = 'LastEventTime',
       limit = 10
     )
   else:
     response = client.describe_log_streams(
-      logGroupName = config['AWS']['LogGroupName'],
+      logGroupName = config[args.section]['LogGroupName'],
       orderBy = 'LastEventTime',
       nextToken = token,
       limit = 10
@@ -38,13 +46,13 @@ def log_stream_names(token = None):
 def log_event_messages(log_stream_name, token = None):
   if token == None:
     response = client.get_log_events(
-      logGroupName = config['AWS']['LogGroupName'],
+      logGroupName = config[args.section]['LogGroupName'],
       logStreamName = log_stream_name,
       limit = 100
     )
   else:
     response = client.get_log_events(
-      logGroupName = config['AWS']['LogGroupName'],
+      logGroupName = config[args.section]['LogGroupName'],
       logStreamName = log_stream_name,
       nextToken = token,
       limit = 100
@@ -57,6 +65,9 @@ def log_event_messages(log_stream_name, token = None):
     yield from log_event_messages(log_stream_name, response.get('nextBackwardToken'))  
 
 try:
+  session = Session(profile_name = config[args.section]['Profile'])
+  client = session.client('logs')
+
   for x in log_stream_names():
     #print(x)
     for y in log_event_messages(x):
