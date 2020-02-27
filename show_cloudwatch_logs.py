@@ -98,7 +98,7 @@ try:
 
   for log_stream_name in log_stream_names():
     #print(log_stream_name)
-    for log_event_message in log_event_messages(x):
+    for log_event_message in log_event_messages(log_stream_name):
       print(log_event_message)
 except Exception as e:
   print(e, file=sys.stderr)
