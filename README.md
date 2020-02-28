@@ -52,3 +52,23 @@ python show_cloudwatch_logs.py -s SESSION | grep -e "GET /api/" | sed -e "s/.*GE
 ```sh
 cat url_samples_org | sort | uniq | tee url_samples
 ```
+
+リクエストを投げて結果を保存
+
+- DIRで指定したディレクトリをルートディレクトリとして、${url}のパスをルートディレクト以下に作成
+- パスの最後は出力結果を保存するファイル名
+- ディレクトリとの重複を考え、結果ファイル名はPrefixに `_` を付与
+- e.g.
+
+|url|directory|filename|
+|---|---|---|
+|/app/piyo|DIR/app|_piyo|
+|/app/hoge/|DIR/app|_hoge|
+|/app/hoge/fuga&param=1|DIR/app/hoge|_fuga&param=1|
+
+```sh
+cat url_samples | while read url
+do
+  python request_urls.py -s SESSION -d DIR "${url}"
+done
+```
