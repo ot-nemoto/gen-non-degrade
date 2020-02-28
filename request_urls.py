@@ -32,22 +32,25 @@ try:
   req = urllib.request.Request(url)
   print(url)
   with urllib.request.urlopen(req) as res:
-    res_body = json.loads(res.read().decode('utf-8'))
-    #print(json.dumps(res_body, ensure_ascii = False, indent = 2))
-
-    filepath = os.path.join(
-      args.dir,
-      re.sub('/$', '', re.sub('^/', '', args.url_path)))
-    dirname = os.path.dirname(filepath)
-    basename = os.path.basename(filepath)
-
-    # make directory if not exists.
-    if os.path.exists(dirname) is False:
-      os.makedirs(dirname)
-
-    # write response body
-    with open("%s/_%s" % (dirname, basename), mode = 'w') as f:
-      f.write(json.dumps(res_body, ensure_ascii = False, indent = 2))
+    res_body = json.dumps(
+      json.loads(res.read().decode('utf-8')), ensure_ascii = False, indent = 2)
+    #print(res_body)
 
 except Exception as e:
   print(e, file=sys.stderr)
+  res_body = "{0}".format(e)
+
+finally:
+  filepath = os.path.join(
+    args.dir,
+    re.sub('/$', '', re.sub('^/', '', args.url_path)))
+  dirname = os.path.dirname(filepath)
+  basename = os.path.basename(filepath)
+
+  # make directory if not exists.
+  if os.path.exists(dirname) is False:
+    os.makedirs(dirname)
+
+  # write response body
+  with open("%s/_%s" % (dirname, basename), mode = 'w') as f:
+    f.write(res_body)
