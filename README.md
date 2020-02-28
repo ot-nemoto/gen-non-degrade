@@ -32,13 +32,13 @@
 
 ## 使い方
 
-ライブラリをインストール
+### ライブラリをインストール
 
 ```sh
 pip install -r requirements.txt
 ```
 
-CloudWatch Logs からリクエストを抽出
+### CloudWatch Logs からリクエストを抽出
 
 - `SESSION` は **設定** で追加したセッションを指定
 - Grepは実際のログフォーマットとに合わせて
@@ -47,13 +47,13 @@ CloudWatch Logs からリクエストを抽出
 python show_cloudwatch_logs.py -s SESSION | grep -e "GET /api/" | sed -e "s/.*GET \(.*\) HTTP.*/\1/g" | tee url_samples_org
 ```
 
-重複するリクエストを取り除く
+### 重複するリクエストを取り除く
 
 ```sh
 cat url_samples_org | sort | uniq | tee url_samples
 ```
 
-リクエストを投げて結果を保存
+### リクエストを投げて結果を保存
 
 - DIRで指定したディレクトリをルートディレクトリとして、${url}のパスをルートディレクト以下に作成
 - パスの最後は出力結果を保存するファイル名
