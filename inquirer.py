@@ -17,7 +17,7 @@ EVENT_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 # ======================================
 # argparse
 # ======================================
-parser = argparse.ArgumentParser(description='Show Amazon CloudWatch Logs.')
+parser = argparse.ArgumentParser(description='Inquire Amazon CloudWatch Logs.')
 parser.add_argument("-s", "--section", default='DEFAULT', help='Section in config.ini')
 args = parser.parse_args()
 

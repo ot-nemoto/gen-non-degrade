@@ -44,7 +44,7 @@ pip install -r requirements.txt
 - Grepは実際のログフォーマットとに合わせて
 
 ```sh
-python show_cloudwatch_logs.py -s SESSION | grep -e "GET /api/" | sed -e "s/.*GET \(.*\) HTTP.*/\1/g" | tee url_samples_org
+python inquirer.py -s SESSION | grep -e "GET /api/" | sed -e "s/.*GET \(.*\) HTTP.*/\1/g" | tee url_samples_org
 ```
 
 ### 重複するリクエストを取り除く
@@ -69,6 +69,6 @@ cat url_samples_org | sort | uniq | tee url_samples
 ```sh
 cat url_samples | while read url
 do
-  python request_urls.py -s SESSION -d DIR "${url}"
+  python requestor.py -s SESSION -d DIR "${url}"
 done
 ```
