@@ -1,8 +1,8 @@
-# let-me-monkey-testing
+# generate-response-from-clowdwatchlogs
 
 ## 概要
 
-- APIのモンキーテストをするなら、実際のリクエストを使えばいいんじゃないか？
+- APIの退行テストは実際のリクエストログからケースを抽出しよう
 - ログからリクエストパスをあさって取得しよう
 - 取得したリクエストパスを実行して結果を保存しておこう
 - 開発したら、再度、取得したリクエストパスを実行して結果を保存しよう
@@ -71,4 +71,20 @@ cat url_samples | while read url
 do
   python requestor.py -s SESSION -d DIR "${url}"
 done
+```
+
+※リリース後、再度 リクエストを投げて結果を保存
+
+### 差分を確認
+
+差分のあるファイルを抽出
+
+```sh
+diff -r -q DIR1 DOR2
+```
+
+差分をチェックし、妥当な差分かを検証
+
+```sh
+diff -y FILE1 FILE2
 ```
